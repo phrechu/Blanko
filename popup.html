@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        width: 300px;
+        padding: 12px;
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #161618;
+        color: #d4d4d4;
+      }
+      h3 {
+        margin-top: 0;
+        margin-bottom: 8px;
+      }
+      p {
+        margin: 8px 0;
+      }
+      ol {
+        margin: 8px 0;
+        padding-left: 20px;
+      }
+      li {
+        margin-bottom: 4px;
+      }
+      .warning {
+        color: #a42903;
+        background-color: #ffccba;
+        padding: 8px;
+        border-radius: 4px;
+        margin: 8px 0;
+        font-size: 0.9em;
+      }
+      code {
+        background-color: #404045c1;
+        padding: 2px 4px;
+        border: 1px solid #404045;
+        border-radius: 4px;
+        font-size: 0.9em;
+      }
+      #setup-link {
+        display: block;
+        margin-top: 8px;
+        color: #4a9eff;
+        text-decoration: none;
+        font-size: 0.9em;
+      }
+      #setup-link:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <h3>Quick Setup</h3>
+
+    <ol>
+      <li>Go to <code>about:config</code></li>
+      <li>Find <code>browser.tabs.allow_transparent_browser</code></li>
+      <li>Set to <strong>true</strong></li>
+    </ol>
+
+    <div class="warning">
+      <strong>Note:</strong> Set back to <strong>false</strong> if you remove
+      the extension.
+    </div>
+
+    <a href="#" id="setup-link">Open detailed setup guide</a>
+    <script>
+      document.getElementById("setup-link").addEventListener("click", (e) => {
+        e.preventDefault();
+        browser.tabs.create({ url: "setup.html" });
+      });
+    </script>
+  </body>
+</html>

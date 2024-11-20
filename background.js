@@ -1,5 +1,15 @@
 'use strict';
 
+// Check if this is the first run after installation
+browser.runtime.onInstalled.addListener((details) => {
+  if (details.reason === "install") {
+    // Open the setup page
+    browser.tabs.create({
+      url: "setup.html"
+    });
+  }
+});
+
 // Constants
 const TRANSPARENT_COLORS = [
   'rgba(0, 0, 0, 0)',

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Blanko Setup</title>
+    <link rel="icon" href="./icons/icon-48.svg" />
+    <style>
+      html,
+      body {
+        background-color: #161618 !important;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+      }
+      main {
+        padding: 20px;
+        max-width: 550px;
+        margin: 0 auto;
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        background-color: #161618;
+        color: #d4d4d4;
+      }
+      .warning {
+        color: #a42903;
+        background-color: #ffccba;
+        padding: 10px;
+        border-radius: 4px;
+        margin: 10px 0;
+      }
+      code {
+        background-color: #404045c1;
+        padding: 2px 4px;
+        border: 1px solid #404045;
+        border-radius: 4px;
+        font-size: 1em;
+        color: #d4d4d4;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Welcome to Blanko!</h1>
+
+      <p>
+        Thank you for installing this extension. To enable window transparency,
+        you'll need to make a small change in Zen's configuration:
+      </p>
+
+      <ol>
+        <li>Open a new tab and navigate to <code>about:config</code></li>
+        <li>Search for: <code>browser.tabs.allow_transparent_browser</code></li>
+        <li>
+          Set its value to <strong>true</strong> by clicking the toggle button
+        </li>
+      </ol>
+
+      <div class="warning">
+        <strong>Note:</strong> If you decide to remove this extension later,
+        remember to set <code>browser.tabs.allow_transparent_browser</code> back
+        to <strong>false</strong> manually through about:config if you no longer
+        need this feature.
+      </div>
+
+      <p>
+        You can always access this setup page by clicking the extension icon in
+        your toolbar.
+      </p>
+    </main>
+  </body>
+</html>
