@@ -1,6 +1,6 @@
-# Blanko - Blank New Tab for Zen Browser Extension
+# Blanko
 
-A lightweight browser extension for Zen Browser (Firefox-based) that ensures proper background colors on web pages and provides a clean new tab experience.
+A lightweight browser extension for Zen Browser that ensures proper background colors on web pages and provides a clean new tab experience.
 
 ## Features
 
@@ -38,9 +38,11 @@ To modify or build the extension:
 
 ## Files Structure
 
-empty-new-tab/
+blanko/
 ├── manifest.json # Extension manifest
 ├── background.js # Main extension logic
+├── popup.html # Extension popup
+├── setup.html # Setup instructions page
 ├── icons/ # Extension icons
 │ ├── icon-48.svg
 │ └── icon-96.svg
@@ -70,7 +72,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Author
 
-[Phrechu](https://github.com/Phrechu)
+[Phrechu](https://github.com/Phrechu).
 
 ## Version History
 
