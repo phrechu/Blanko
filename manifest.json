@@ -1,0 +1,19 @@
+{
+  "manifest_version": 2,
+  "name": "Blanko",
+  "version": "1.0.0",
+  "description": "Ensures proper background colors on web pages",
+  "author": "Phrechu",
+
+  "icons": {
+    "48": "icons/icon-48.svg",
+    "96": "icons/icon-96.svg"
+  },
+
+  "permissions": ["tabs", "<all_urls>"],
+
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": true
+  }
+}
