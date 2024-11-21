@@ -13,14 +13,14 @@
   },
 
   "icons": {
-    "48": "icons/icon-48.svg",
-    "96": "icons/icon-96.svg"
+    "48": "icons/icon-48.gif",
+    "96": "icons/icon-96.gif"
   },
 
   "browser_action": {
     "default_icon": {
-      "48": "icons/icon-48.svg",
-      "96": "icons/icon-96.svg"
+      "48": "icons/icon-48.gif",
+      "96": "icons/icon-96.gif"
     },
     "default_popup": "popup.html"
   },
