@@ -32,10 +32,6 @@ const shouldProcessUrl = (url) => url && !EXCLUDED_URLS.some(excluded => url.sta
 // Main injection code - kept separate for clarity and maintainability
 const injectionCode = `
   (function() {
-    // Inject immediately
-    document.documentElement.setAttribute('style', 'background-color: white !important');
-    
-    // Verify after DOM is ready
     const verifyBackground = () => {
       const html = document.documentElement;
       const body = document.body;
@@ -47,14 +43,45 @@ const injectionCode = `
       
       const isTransparent = color => ['rgba(0, 0, 0, 0)', 'transparent', ''].includes(color);
       
-      if (isTransparent(htmlStyle.backgroundColor) && isTransparent(bodyStyle.backgroundColor)) {
-        html.setAttribute('style', 'background-color: white !important');
+      // Check if there's any CSS custom property for background-color
+      const hasCustomProperty = element => {
+        const style = window.getComputedStyle(element);
+        return style.getPropertyValue('--background-color') || 
+               style.getPropertyValue('--bg-color') ||
+               style.getPropertyValue('--backgroundColor');
+      };
+
+      // Check if element has inline style for background
+      const hasInlineBackground = element => {
+        const style = element.getAttribute('style');
+        return style && style.includes('background');
+      };
+
+      // Only inject if both html and body are truly transparent
+      // and there are no custom properties or inline styles
+      if (isTransparent(htmlStyle.backgroundColor) && 
+          isTransparent(bodyStyle.backgroundColor) &&
+          !hasCustomProperty(html) &&
+          !hasCustomProperty(body) &&
+          !hasInlineBackground(html) &&
+          !hasInlineBackground(body)) {
+        
+        // Use a class instead of inline style for better compatibility
+        if (!html.classList.contains('blanko-background')) {
+          const style = document.createElement('style');
+          style.textContent = \`.blanko-background { background-color: white !important; }\`;
+          document.head.appendChild(style);
+          html.classList.add('blanko-background');
+        }
       }
     };
 
     // Check both immediately and after DOM is ready
     verifyBackground();
     document.addEventListener('DOMContentLoaded', verifyBackground, { once: true });
+
+    // Also check after a short delay to catch dynamic changes
+    setTimeout(verifyBackground, 500);
   })();
 `;
 
