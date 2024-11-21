@@ -20,9 +20,6 @@ const TRANSPARENT_COLORS = [
 const EXCLUDED_URLS = [
   'about:blank',
   'about:newtab',
-  // 'moz-extension://',
-  // 'chrome://',
-  // 'file://'
 ];
 
 // Helper functions
@@ -51,20 +48,37 @@ const injectionCode = `
                style.getPropertyValue('--backgroundColor');
       };
 
+      // Check for background-related classes (Tailwind, Bootstrap, etc.)
+      const hasBackgroundClass = element => {
+        const classList = Array.from(element.classList);
+        return classList.some(className => 
+          className.startsWith('bg-') ||      // Tailwind, Bootstrap
+          className.startsWith('background-') ||
+          className.includes('has-background') || // Common patterns
+          className.match(/^(light|dark)-bg/) || // Theme-related
+          className.match(/^theme-/)             // Theme classes
+        );
+      };
+
       // Check if element has inline style for background
       const hasInlineBackground = element => {
         const style = element.getAttribute('style');
-        return style && style.includes('background');
+        return style && (
+          style.includes('background') ||
+          style.includes('bg-')
+        );
       };
 
       // Only inject if both html and body are truly transparent
-      // and there are no custom properties or inline styles
+      // and there are no custom properties, classes, or inline styles
       if (isTransparent(htmlStyle.backgroundColor) && 
           isTransparent(bodyStyle.backgroundColor) &&
           !hasCustomProperty(html) &&
           !hasCustomProperty(body) &&
           !hasInlineBackground(html) &&
-          !hasInlineBackground(body)) {
+          !hasInlineBackground(body) &&
+          !hasBackgroundClass(html) &&
+          !hasBackgroundClass(body)) {
         
         // Use a class instead of inline style for better compatibility
         if (!html.classList.contains('blanko-background')) {
