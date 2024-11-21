@@ -1,82 +1,51 @@
 # Blanko
 
-A lightweight browser extension for Zen Browser that ensures proper background colors on web pages and provides a clean new tab experience.
+A Zen Browser extension that ensures proper background colors on web pages with transparent backgrounds.
 
 ## Features
 
-- Automatically adds white background to pages with transparent backgrounds
-- Fast and efficient - runs at document start
-- Minimal permissions required
-- No tracking or data collection
+- Automatically detects and fixes transparent backgrounds
+- Respects existing color schemes and dark modes
+- Lightweight and performance-friendly
+- Simple setup process
 
 ## Installation
 
-### Manual Installation
+### From Firefox Add-ons
 
-1. Download the extension files
-2. Open Zen Browser
-3. Go to `about:debugging#/runtime/this-firefox`
-4. Click "Load Temporary Add-on"
-5. Select the `manifest.json` file from the extension directory
+will be added soon.
 
-### Required Configuration
-
-For the extension to work properly, you need to manually set a browser preference:
-
-1. Open a new tab and navigate to `about:config`
-2. Accept the warning message
-3. Search for `browser.tabs.allow_transparent_browser`
-4. Set its value to `true` by double-clicking it
-
-## Development
-
-To modify or build the extension:
+### Manual Installation (Development)
 
 1. Clone this repository
-2. Make your changes
-3. Test in Zen Browser using the manual installation steps above
+2. Open Firefox Developer Edition
+3. Navigate to `about:debugging#/runtime/this-firefox`
+4. Click "Load Temporary Add-on"
+5. Select any file in the extension directory
 
-## Files Structure
+### Post-Installation Setup
 
-blanko/
-├── manifest.json # Extension manifest
-├── background.js # Main extension logic
-├── popup.html # Extension popup
-├── setup.html # Setup instructions page
-├── icons/ # Extension icons
-│ ├── icon-48.svg
-│ └── icon-96.svg
-├── README.md # This file
-└── LICENSE # MIT license
+1. Navigate to `about:config`
+2. Search for `browser.tabs.allow_transparent_browser`
+3. Set it to `true`
 
-## Permissions
+## Privacy & Permissions
 
-This extension requires:
+This extension requires the following permissions:
 
-- `tabs`: To detect new tabs and URL changes
-- `<all_urls>`: To inject background colors where needed
+- `tabs`: Required to detect and modify background colors
+- `<all_urls>`: Required to fix backgrounds on any website
 
-## Browser Compatibility
+The extension:
 
-- Zen Browser (Firefox-based): ✓
-- Other Firefox-based browsers: Should work but untested
-- Firefox: Should work but untested
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
+- Does not collect any user data
+- Does not communicate with external servers
+- Only modifies background colors when necessary
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Distributed under the MIT License. See `LICENSE` for more information.
 
-## Author
+## Support
 
-[Phrechu](https://github.com/Phrechu).
-
-## Version History
-
-- 1.0.0: Initial release
-  - Basic functionality
-  - Background color injection
-  - New tab handling
+If you encounter any issues, please file them in the GitHub issues section.
