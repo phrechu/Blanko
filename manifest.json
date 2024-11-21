@@ -8,8 +8,7 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "blanko@phrechu.addon",
-      "strict_min_version": "57.0",
-      "strict_max_version": "133.0"
+      "strict_min_version": "79.0"
     }
   },
 
