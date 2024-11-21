@@ -1,119 +1,114 @@
 'use strict';
 
-// Check if this is the first run after installation
-browser.runtime.onInstalled.addListener((details) => {
-  if (details.reason === "install") {
-    // Open the setup page
-    browser.tabs.create({
-      url: "setup.html"
-    });
+// Configuration constants - kept for edge cases
+const CONFIG = {
+  TRANSPARENT_COLORS: ['rgba(0, 0, 0, 0)', 'transparent', ''],
+  EXCLUDED_URLS: ['about:blank', 'about:newtab'],
+  CSS_VARS: ['--background-color', '--bg-color', '--backgroundColor'],
+  CLASS_PATTERNS: {
+    PREFIX: ['bg-', 'background-'],
+    CONTAINS: ['has-background']
   }
-});
+};
 
-// Constants
-const TRANSPARENT_COLORS = [
-  'rgba(0, 0, 0, 0)',
-  'transparent',
-  ''
-];
+// Setup handler
+const handleInstallation = (details) => {
+  if (details.reason === "install") {
+    browser.tabs.create({ url: "setup.html" });
+  }
+};
 
-const EXCLUDED_URLS = [
-  'about:blank',
-  'about:newtab',
-];
-
-// Helper functions
-const isTransparentColor = (color) => TRANSPARENT_COLORS.includes(color);
-const shouldProcessUrl = (url) => url && !EXCLUDED_URLS.some(excluded => url.startsWith(excluded));
-
-// Main injection code - kept separate for clarity and maintainability
-const injectionCode = `
+// Optimized injection code
+const createInjectionCode = () => `
   (function() {
-    const verifyBackground = () => {
-      const html = document.documentElement;
-      const body = document.body;
-      
+    const CONFIG = ${JSON.stringify(CONFIG)};
+    
+    // Cache DOM elements and styles
+    const html = document.documentElement;
+    const body = document.body;
+    
+    function checkBackground() {
       if (!html || !body) return;
       
-      const htmlStyle = window.getComputedStyle(html);
-      const bodyStyle = window.getComputedStyle(body);
+      // Cache computed styles (reduces calls)
+      const htmlStyle = getComputedStyle(html);
+      const bodyStyle = getComputedStyle(body);
       
-      const isTransparent = color => ['rgba(0, 0, 0, 0)', 'transparent', ''].includes(color);
+      // Quick transparent check
+      const isTransparent = color => CONFIG.TRANSPARENT_COLORS.includes(color);
+      if (!isTransparent(htmlStyle.backgroundColor) || !isTransparent(bodyStyle.backgroundColor)) {
+        return;
+      }
       
-      // Check if there's any CSS custom property for background-color
-      const hasCustomProperty = element => {
-        const style = window.getComputedStyle(element);
-        return style.getPropertyValue('--background-color') || 
-               style.getPropertyValue('--bg-color') ||
-               style.getPropertyValue('--backgroundColor');
-      };
-
-      // Check for background-related classes (Tailwind, Bootstrap, etc.)
+      // Quick class check using native methods
       const hasBackgroundClass = element => {
-        const classList = Array.from(element.classList);
-        return classList.some(className => 
-          className.startsWith('bg-') ||      // Tailwind, Bootstrap
-          className.startsWith('background-') ||
-          className.includes('has-background') || // Common patterns
-          className.match(/^(light|dark)-bg/) || // Theme-related
-          className.match(/^theme-/)             // Theme classes
+        const classList = element.classList;
+        return CONFIG.CLASS_PATTERNS.PREFIX.some(prefix => 
+          Array.from(classList).some(cls => cls.startsWith(prefix))
+        ) || CONFIG.CLASS_PATTERNS.CONTAINS.some(pattern => 
+          Array.from(classList).some(cls => cls.includes(pattern))
         );
       };
-
-      // Check if element has inline style for background
+      
+      // Check for CSS variables (cached styles)
+      const hasCustomProperty = element => {
+        const style = getComputedStyle(element);
+        return CONFIG.CSS_VARS.some(prop => style.getPropertyValue(prop).trim());
+      };
+      
+      // Inline style check
       const hasInlineBackground = element => {
         const style = element.getAttribute('style');
-        return style && (
-          style.includes('background') ||
-          style.includes('bg-')
-        );
+        return style && (style.includes('background') || style.includes('bg-'));
       };
-
-      // Only inject if both html and body are truly transparent
-      // and there are no custom properties, classes, or inline styles
-      if (isTransparent(htmlStyle.backgroundColor) && 
-          isTransparent(bodyStyle.backgroundColor) &&
-          !hasCustomProperty(html) &&
-          !hasCustomProperty(body) &&
-          !hasInlineBackground(html) &&
-          !hasInlineBackground(body) &&
-          !hasBackgroundClass(html) &&
-          !hasBackgroundClass(body)) {
+      
+      // Only proceed if no background is found
+      if (!hasCustomProperty(html) && !hasCustomProperty(body) &&
+          !hasInlineBackground(html) && !hasInlineBackground(body) &&
+          !hasBackgroundClass(html) && !hasBackgroundClass(body)) {
         
-        // Use a class instead of inline style for better compatibility
+        // Apply background only once
         if (!html.classList.contains('blanko-background')) {
           const style = document.createElement('style');
-          style.textContent = \`.blanko-background { background-color: white !important; }\`;
-          document.head.appendChild(style);
+          style.textContent = '.blanko-background{background-color:white!important}';
+          (document.head || html).appendChild(style);
           html.classList.add('blanko-background');
         }
       }
-    };
-
-    // Check both immediately and after DOM is ready
-    verifyBackground();
-    document.addEventListener('DOMContentLoaded', verifyBackground, { once: true });
-
-    // Also check after a short delay to catch dynamic changes
-    setTimeout(verifyBackground, 500);
+    }
+    
+    // Initial check
+    checkBackground();
+    
+    // Check once DOM is loaded
+    document.addEventListener('DOMContentLoaded', checkBackground, { once: true });
+    
+    // Final check for dynamic content
+    requestAnimationFrame(() => setTimeout(checkBackground, 100));
   })();
 `;
 
-// Main listener
-browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  // Only process during initial load and for valid URLs
-  if (changeInfo.status !== 'loading' || !shouldProcessUrl(tab.url)) {
-    return;
-  }
+// Simplified URL validation
+const isValidUrl = url => url && !CONFIG.EXCLUDED_URLS.some(excluded => url.startsWith(excluded));
 
-  browser.tabs.executeScript(tabId, {
-    code: injectionCode,
-    runAt: 'document_start'
-  }).catch(error => {
-    // Only log actual errors, ignore expected permission errors
-    if (!error.message?.includes('Missing host permission') &&
-      !error.message?.includes('Cannot access')) {
-      console.error(`Background injection failed for tab ${tabId}:`, error);
-    }
-  });
-});
+// Simplified error handling
+const handleError = (error, tabId) => {
+  if (!error.message?.includes('Missing host permission') &&
+    !error.message?.includes('Cannot access')) {
+    console.error(`Injection failed for tab ${tabId}:`, error);
+  }
+};
+
+// Optimized tab update handler
+const handleTabUpdate = (tabId, changeInfo, tab) => {
+  if (changeInfo.status === 'loading' && isValidUrl(tab.url)) {
+    browser.tabs.executeScript(tabId, {
+      code: createInjectionCode(),
+      runAt: 'document_start'
+    }).catch(error => handleError(error, tabId));
+  }
+};
+
+// Event listeners
+browser.runtime.onInstalled.addListener(handleInstallation);
+browser.tabs.onUpdated.addListener(handleTabUpdate);
