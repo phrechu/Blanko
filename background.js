@@ -83,8 +83,23 @@ const createInjectionCode = () => `
     // Check once DOM is loaded
     document.addEventListener('DOMContentLoaded', checkBackground, { once: true });
     
-    // Final check for dynamic content
-    requestAnimationFrame(() => setTimeout(checkBackground, 100));
+    // Add MutationObserver for dynamic content
+    const observer = new MutationObserver((mutations) => {
+      requestAnimationFrame(checkBackground);
+    });
+    
+    // Start observing once DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['style', 'class']
+      });
+    });
+    
+    // Cleanup observer after 30 seconds to prevent memory leaks
+    setTimeout(() => observer.disconnect(), 30000);
   })();
 `;
 
@@ -95,13 +110,14 @@ const isValidUrl = url => url && !CONFIG.EXCLUDED_URLS.some(excluded => url.star
 const handleError = (error, tabId) => {
   if (!error.message?.includes('Missing host permission') &&
     !error.message?.includes('Cannot access')) {
-    console.error(`Injection failed for tab ${tabId}:`, error);
+    console.error(`Injection failed for tab ${tabId}: `, error);
   }
 };
 
 // Optimized tab update handler
 const handleTabUpdate = (tabId, changeInfo, tab) => {
-  if (changeInfo.status === 'loading' && isValidUrl(tab.url)) {
+  if ((changeInfo.status === 'loading' || changeInfo.status === 'complete') &&
+    isValidUrl(tab.url)) {
     browser.tabs.executeScript(tabId, {
       code: createInjectionCode(),
       runAt: 'document_start'
