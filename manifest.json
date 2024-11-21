@@ -9,7 +9,7 @@
     "gecko": {
       "id": "blanko@phrechu.addon",
       "strict_min_version": "57.0",
-      "strict_max_version": "*"
+      "strict_max_version": "133.0"
     }
   },
 
