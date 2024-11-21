@@ -2,8 +2,15 @@
   "manifest_version": 2,
   "name": "Blanko",
   "version": "1.0.0",
-  "description": "Ensures proper background colors on web pages",
+  "description": "Ensures proper background colors on web pages with transparent backgrounds",
   "author": "Phrechu",
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "blanko@phrechu.addon",
+      "strict_min_version": "57.0"
+    }
+  },
 
   "icons": {
     "48": "icons/icon-48.svg",
@@ -18,7 +25,7 @@
     "default_popup": "popup.html"
   },
 
-  "permissions": ["tabs", "<all_urls>", "storage"],
+  "permissions": ["tabs", "<all_urls>"],
 
   "background": {
     "scripts": ["background.js"],
