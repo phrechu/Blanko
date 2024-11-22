@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
   "name": "Blanko",
-  "version": "1.0.0",
-  "description": "Ensures proper background colors on web pages with transparent backgrounds",
+  "version": "1.0.1",
+  "description": "Ensures proper background color on web pages with transparent backgrounds",
   "author": "Phrechu",
   "homepage_url": "https://github.com/phrechu/blanko",
   "browser_specific_settings": {
