@@ -9,11 +9,15 @@ A Zen Browser extension that ensures proper background colors on web pages with 
 - Lightweight and performance-friendly
 - Simple setup process
 
+## Note
+
+This extension is experimental, you should expect that some websites go under the radar.
+
 ## Installation
 
 ### From Firefox Add-ons
 
-will be added soon.
+[Blanko](https://addons.mozilla.org/en-US/firefox/addon/blanko/)
 
 ### Manual Installation (Development)
 
